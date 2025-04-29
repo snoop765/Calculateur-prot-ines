@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculateur de Protéines</title>
+
+  <style>
+
+    body { 
+    font-family: Arial; 
+    padding: 20px; 
+    max-width: 600px; 
+    margin: auto; 
+    background: linear-gradient(45deg, #ede0f7, #d1c4e9); }
+
+    h1, h2 { text-align: center; color: grey; }
+
+select, input[type="number"] {
+  width: 100%;
+  max-width: 600px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  margin: 10px auto;
+  display: block;
+  appearance: none;
+}
+
+
+
+.bouton-retour {
+  background-color: #B388FF;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 18px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.bouton-retour:hover {
+  background-color: #9370DB;
+  transform: scale(1.05);
+}
+
+
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 20px;
+  margin-bottom: 30px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+    .titre-bleu { color: #388E3C; }
+    .titre-principal { font-size: 36px; /* Plus grand */
+    font-weight: bold; /* En gras */
+    margin-bottom: 30px; /* Un peu plus d'espace en bas */ 
+    text-align: center;
+  background: linear-gradient(270deg, #9370DB, #B388FF, #9370DB);
+  background-size: 600% 600%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 10px #9370DB, 0 0 20px #9370DB;
+  animation: vagueLente 8s ease-in-out infinite;
+  text-shadow: 0 0 8px rgba(147, 112, 219, 0.5);
+}
+
+/* Animation vague */
+@keyframes vagueLente {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Animation de la lumière douce */
+@keyframes lumiereRespire {
+  0% { text-shadow: 0 0 5px #9370DB, 0 0 10px #9370DB; }
+  50% { text-shadow: 0 0 20px #B388FF, 0 0 40px #B388FF; }
+  100% { text-shadow: 0 0 5px #9370DB, 0 0 10px #9370DB; }
+}
+
+    .titre-mauve { color: #9370DB; }
+    .titre-ajout { font-size: 34px; font-weight: bold; }
+    label, select, input, button { display: block; width: 100%; margin: 10px 0; font-size: 16px; }
+    button { background-color: #9370DB; color: white; border: none; padding: 15px; border-radius: 12px; box-shadow: 0 4px          6px rgba(0,0,0,0.3); margin-bottom: 20px; cursor: pointer; transition: background-color 0.3s; }
+    .bouton-ajouter:hover {
+    background-color: #7A5FD3; /* couleur un peu plus foncée au survol */ }
+    canvas { margin-top: 30px; width: 100%; height: auto; }
+    .section { margin-top: 40px; }
+
+.titre-ajout {
+  font-size: 26px; /* Plus grand */
+  font-weight: bold; /* En gras */
+  transition: transform 0.3s ease; /* Animation douce */ }
+.titre-ajout:hover { transform: scale(1.05); /* Léger zoom au survol */ }
+
+.progress-container {
+  width: 100%;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 25px;
+  margin-top: 20px;
+}
+
+body.sombre {
+  background: linear-gradient(45deg, #2c2c2c, #1a1a1a);
+  color: #e0e0e0;
+}
+
+body.sombre .card {
+  background: #333;
+  box-shadow: 0 4px 8px rgba(255,255,255,0.1);
+}
+
+body.sombre h1, 
+body.sombre h2, 
+body.sombre label {
+  color: #e0e0e0;
+}
+
+body.sombre input, 
+body.sombre select, 
+body.sombre button {
+  background-color: #444;
+  color: #e0e0e0;
+  border: 1px solid #777;
+}
+
+body.sombre button:hover {
+  background-color: #666;
+}
+
+
+#progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #388E3C, #B388FF);
+  width: 0%;
+  transition: width 0.5s ease;`
+}
+#modeSombreBtn {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 20px;
+  line-height: 40px;
+  text-align: center;
+  border: none;
+  border-radius: 50%;
+  background-color: #7f5af0;
+  color: white;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+#modeSombreBtn:hover {
+  background-color: #5d3fd3;
+  transform: scale(1.1);
+}
+
+
+
+
+  </style>
+</head>
+<body>
+
+<h1 class="titre-mauve titre-principal">Calculateur de Protéines</h1>
+
+<div style="text-align: center; margin: 20px;">
+  <button id="modeSombreBtn" onclick="toggleModeSombre()">🌙</button>
+
+</div>
+
+
+<div id="initialForm" class="card">
+  <label>Sexe :</label>
+  <select id="sexe">
+    <option value="homme">Homme</option>
+    <option value="femme">Femme</option>
+  </select>
+
+  <label>Poids (kg) :</label>
+  <input type="number" id="poids" />
+
+  <button class="bouton-ajouter" onclick="validerInfos()"> 🚀 Commencer</button>
+</div>
+
+
+<div id="mainApp" style="display:none;">
+
+
+
+<div class="card">
+<h2 style="font-size: 28px;">Total consommé aujourd'hui</h2>
+<p id="resultat" style="text-align: center; font-size: 24px; font-weight: bold; margin-top: 10px; "></p>
+<div class="progress-container">
+  <div id="progress-bar"></div>
+</div>
+</div>
+ 
+
+
+
+<div class="card">
+  <h2 class="titre-ajout titre-bleu">Ajouter un aliment par poids</h2>
+  <select id="alimentPoids"><option value="">-- Choisir un aliment --</option></select>
+  <input type="number" id="poidsAliment" placeholder="Poids en grammes" />
+ <button class="bouton-ajouter" onclick="ajouterParPoids()"> ➕ Ajouter</button>
+</div>
+
+<div class="card">
+  <h2 class="titre-ajout titre-bleu">Ajouter un aliment par quantité</h2>
+  <select id="alimentQuantite"><option value="">-- Choisir un aliment --</option></select>
+  <input type="number" id="nbQuantite" placeholder="Quantité (ex: 1 œuf)" />
+  <button class="bouton-ajouter" onclick="ajouterParQuantite()"> ➕ Ajouter</button>
+</div>
+
+<canvas id="graphique"></canvas>
+<button class="bouton-ajouter" onclick="resetJournee()"> 🔄 Remise à zéro</button>
+
+  <div class="card section">
+    <h2>Ajouter un nouvel aliment à la base</h2>
+    <input type="text" id="nomAliment" placeholder="Nom de l'aliment" />
+    <input type="number" id="valeur100g" placeholder="Protéines pour 100g (facultatif)" />
+    <input type="number" id="valeurQuantite" placeholder="Protéines par unité (facultatif)" />
+    <button class="bouton-ajouter" onclick="ajouterAliment()"> ➕ Ajouter à la base</button>
+  </div>
+
+  <div class="card section">
+    <h2>Modifier ou supprimer un aliment</h2>
+    <select id="alimentModif"><option value="">-- Choisir un aliment --</option></select>
+    <input type="text" id="modifNom" placeholder="Nouveau nom" />
+    <input type="number" id="modif100g" placeholder="Nouvelle valeur pour 100g (facultatif)" />
+    <input type="number" id="modifQuantite" placeholder="Nouvelle valeur par unité (facultatif)" />
+    <button class="bouton-ajouter" onclick="modifierAliment()"> ✏️ Modifier</button>
+    <button onclick="supprimerAliment()" style="background-color:#d32f2f;"> 🗑️ Supprimer</button>
+  </div>
+
+
+<div style="text-align: center; margin-top: 20px;">
+  <button class="bouton-retour" onclick="retourDebut()"> 🏠 Retour page 1</button>
+</div>
+
+
+  
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  let sexe, poidsUtilisateur, besoinProteines, totalProteines = 0, aliments = [], monGraphique;
+
+  function chargerAliments() {
+    const sauvegarde = localStorage.getItem("aliments");
+    if (sauvegarde) {
+      aliments = JSON.parse(sauvegarde);
+    } else {
+      aliments = [
+        { nom: "Poulet", proteinesPar100g: 27, proteinesParQuantite: null },
+        { nom: "Œuf", proteinesPar100g: null, proteinesParQuantite: 6 },
+      ];
+      localStorage.setItem("aliments", JSON.stringify(aliments));
+    }
+    majListes();
+  }
+
+  function majListes() {
+    const selects = {
+      poids: document.getElementById("alimentPoids"),
+      quantite: document.getElementById("alimentQuantite"),
+      modif: document.getElementById("alimentModif")
+    };
+    Object.values(selects).forEach(s => s.innerHTML = '<option value="">-- Choisir un aliment --</option>');
+
+    aliments.forEach((a, i) => {
+      if (a.proteinesPar100g !== null) {
+        selects.poids.innerHTML += `<option value="${i}">${a.nom}</option>`;
+      }
+      if (a.proteinesParQuantite !== null) {
+        selects.quantite.innerHTML += `<option value="${i}">${a.nom}</option>`;
+      }
+      selects.modif.innerHTML += `<option value="${i}">${a.nom}</option>`;
+    });
+  }
+
+function retourDebut() {
+  document.getElementById("mainApp").style.display = "none";
+  document.getElementById("initialForm").style.display = "block";
+}
+
+
+  function ajouterAliment() {
+
+navigator.vibrate(100); // 🔔 petite vibration à chaque ajout
+ 
+    const nom = document.getElementById("nomAliment").value.trim();
+    const p100g = parseFloat(document.getElementById("valeur100g").value);
+    const pQuantite = parseFloat(document.getElementById("valeurQuantite").value);
+    if (!nom || (isNaN(p100g) && isNaN(pQuantite))) return;
+
+    aliments.push({
+      nom,
+      proteinesPar100g: isNaN(p100g) ? null : p100g,
+      proteinesParQuantite: isNaN(pQuantite) ? null : pQuantite,
+    });
+    localStorage.setItem("aliments", JSON.stringify(aliments));
+    majListes();
+    document.getElementById("nomAliment").value = '';
+    document.getElementById("valeur100g").value = '';
+    document.getElementById("valeurQuantite").value = '';
+  }
+
+  function modifierAliment() {
+
+navigator.vibrate(100); // 🔔 petite vibration à chaque ajout
+ 
+    const index = document.getElementById("alimentModif").value;
+    if (index === "") return;
+    const nom = document.getElementById("modifNom").value.trim();
+    const p100g = parseFloat(document.getElementById("modif100g").value);
+    const pQuantite = parseFloat(document.getElementById("modifQuantite").value);
+
+    if (nom) aliments[index].nom = nom;
+    aliments[index].proteinesPar100g = isNaN(p100g) ? null : p100g;
+    aliments[index].proteinesParQuantite = isNaN(pQuantite) ? null : pQuantite;
+
+    localStorage.setItem("aliments", JSON.stringify(aliments));
+    majListes();
+    document.getElementById("modifNom").value = '';
+    document.getElementById("modif100g").value = '';
+    document.getElementById("modifQuantite").value = '';
+  }
+
+  function supprimerAliment() {
+
+navigator.vibrate(100); // 🔔 petite vibration à chaque ajout
+
+    const index = document.getElementById("alimentModif").value;
+    if (index === "") return;
+    aliments.splice(index, 1);
+    localStorage.setItem("aliments", JSON.stringify(aliments));
+    majListes();
+  }
+
+  function validerInfos() {
+    sexe = document.getElementById("sexe").value;
+    poidsUtilisateur = parseFloat(document.getElementById("poids").value);
+    if (isNaN(poidsUtilisateur)) return;
+
+    localStorage.setItem("sexe", sexe);
+    localStorage.setItem("poids", poidsUtilisateur);
+
+    besoinProteines = poidsUtilisateur * (sexe === "homme" ? 1.5 : 1.2);
+    document.getElementById("initialForm").style.display = "none";
+    document.getElementById("mainApp").style.display = "block";
+    chargerAliments();
+    chargerTotal();
+    majTotal();
+    majGraphique();
+  }
+
+  function chargerInfosUtilisateur() {
+    const sexeSauvegarde = localStorage.getItem("sexe");
+    const poidsSauvegarde = localStorage.getItem("poids");
+    if (sexeSauvegarde) document.getElementById("sexe").value = sexeSauvegarde;
+    if (poidsSauvegarde) document.getElementById("poids").value = poidsSauvegarde;
+  }
+
+  function chargerTotal() {
+    const sauvegarde = JSON.parse(localStorage.getItem("totalProteines"));
+    if (sauvegarde && sauvegarde.date === new Date().toDateString()) {
+      totalProteines = sauvegarde.totalProteines;
+    } else {
+      totalProteines = 0;
+      localStorage.setItem("totalProteines", JSON.stringify({ date: new Date().toDateString(), totalProteines }));
+    }
+  }
+
+  function ajouterParPoids() {
+
+navigator.vibrate(100); // 🔔 petite vibration à chaque ajout
+
+    const select = document.getElementById("alimentPoids");
+    const index = select.value;
+    const poids = parseFloat(document.getElementById("poidsAliment").value);
+    if (index === "" || isNaN(poids)) return;
+
+    const aliment = aliments[index];
+    totalProteines += (aliment.proteinesPar100g * poids / 100);
+    localStorage.setItem("totalProteines", JSON.stringify({ date: new Date().toDateString(), totalProteines }));
+
+    select.value = ""; // Remettre la sélection
+    document.getElementById("poidsAliment").value = '';
+
+    majTotal();
+    majGraphique();
+  }
+
+  function ajouterParQuantite() {
+
+navigator.vibrate(100); // 🔔 petite vibration à chaque ajout
+
+    const select = document.getElementById("alimentQuantite");
+    const index = select.value;
+    const quantite = parseFloat(document.getElementById("nbQuantite").value);
+    if (index === "" || isNaN(quantite)) return;
+
+    const aliment = aliments[index];
+    totalProteines += aliment.proteinesParQuantite * quantite;
+    localStorage.setItem("totalProteines", JSON.stringify({ date: new Date().toDateString(), totalProteines }));
+
+    select.value = "";
+    document.getElementById("nbQuantite").value = '';
+
+    majTotal();
+    majGraphique();
+  }
+
+  function resetJournee() {
+
+navigator.vibrate(100); // 🔔 petite vibration à chaque ajout
+
+    totalProteines = 0;
+    localStorage.setItem("totalProteines", JSON.stringify({ date: new Date().toDateString(), totalProteines }));
+    majTotal();
+    majGraphique();
+  }
+
+  function majTotal() {
+  document.getElementById("resultat").innerHTML = `<span style="color: #4CAF50;">${totalProteines.toFixed(2)}g</span> / <span style="color: #9C27B0;">${besoinProteines.toFixed(1)}g</span>`;
+  
+  const pourcentage = Math.min((totalProteines / besoinProteines) * 100, 100);
+  document.getElementById("progress-bar").style.width = pourcentage + "%";
+}
+
+
+  function majGraphique() {
+    const ctx = document.getElementById('graphique').getContext('2d');
+    if (monGraphique) monGraphique.destroy(); // Détruire le graphique existant
+    monGraphique = new Chart(ctx, {
+      type: 'doughnut',
+      data: { labels: ['Consommé', 'Restant'],
+        datasets: [{ label: 'Protéines',
+          data: [totalProteines, Math.max(besoinProteines - totalProteines, 0)],
+          backgroundColor: ['#388E3C', '#9370DB'],
+          borderColor: ['#388E3C', '#9370DB'],
+          borderWidth: 1
+        }]
+      }
+    });
+  }
+
+  window.onload = () => {
+    chargerInfosUtilisateur();
+  };
+
+function toggleModeSombre() {
+  document.body.classList.toggle('sombre');
+  const bouton = document.getElementById('modeSombreBtn');
+  if (document.body.classList.contains('sombre')) {
+    bouton.innerText = "☀️";
+  } else {
+    bouton.innerText = "🌙";
+  }
+}
+
+</script>
+
+<!-- Ton contenu principal de l'application -->
+
+<!-- Bouton Contact -->
+<button id="contactBtn" style="...">Contact</button>
+
+
+<!-- Fenêtre modale cachée par défaut -->
+<div id="contactModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+  <div style="background: white; margin: 15% auto; padding: 20px; width: 80%; max-width: 300px; border-radius: 10px; text-align: center;">
+    <h2>La petite Appli de Titi</h2>
+    <p>Contact : <strong>Toutoune pour les intimes</strong></p>
+    <p style="font-style: italic;">SAV: Pas là 😜</p>
+    <button id="closeModal" style="margin-top: 10px;">Fermer</button>
+  </div>
+</div>
+
+
+<script>
+// Ouvre et ferme la fenêtre modale
+document.getElementById("contactBtn").onclick = function() {
+  document.getElementById("contactModal").style.display = "block";
+};
+
+document.getElementById("closeModal").onclick = function() {
+  document.getElementById("contactModal").style.display = "none";
+};
+
+window.onclick = function(event) {
+  if (event.target == document.getElementById("contactModal")) {
+    document.getElementById("contactModal").style.display = "none";
+  }
+};
+</script>
+
+
+</body>
+</html>
