@@ -234,7 +234,10 @@ body.sombre button:hover {
 </div>
 
 <canvas id="graphique"></canvas>
-<button class="bouton-ajouter" onclick="resetJournee()"> 🔄 Remise à zéro</button>
+<button class="bouton-ajouter" onclick="resetJournee()"> 🔄 Remise à zéro jour</button>
+<canvas id="graphiqueHistorique" style="margin-top: 30px;"></canvas>
+<button class="bouton-ajouter" onclick="resetSemaine()"> 🧹 Remise à zéro semaine</button>
+
 
   <div class="card section">
     <h2>Ajouter un nouvel aliment à la base</h2>
@@ -267,19 +270,58 @@ body.sombre button:hover {
 <script>
   let sexe, poidsUtilisateur, besoinProteines, totalProteines = 0, aliments = [], monGraphique;
 
-  function chargerAliments() {
-    const sauvegarde = localStorage.getItem("aliments");
-    if (sauvegarde) {
-      aliments = JSON.parse(sauvegarde);
-    } else {
-      aliments = [
-        { nom: "Poulet", proteinesPar100g: 27, proteinesParQuantite: null },
-        { nom: "Œuf", proteinesPar100g: null, proteinesParQuantite: 6 },
-      ];
-      localStorage.setItem("aliments", JSON.stringify(aliments));
-    }
-    majListes();
-  }
+  
+function chargerAliments() {
+  aliments = [
+    { nom: "Spiruline", proteinesPar100g: 57, proteinesParQuantite: null },
+    { nom: "1 cuillère Poudre protéines", proteinesPar100g: null, proteinesParQuantite: 7 },
+    { nom: "1 carré Chocolat noir 70%", proteinesPar100g: null, proteinesParQuantite: 2 },
+    { nom: "Pain épautre", proteinesPar100g: 12, proteinesParQuantite: null },
+    { nom: "1 tranche de Pain de mie", proteinesPar100g: null, proteinesParQuantite: 2 },
+    { nom: "1 Tranche pain complet ou épeautre", proteinesPar100g: null, proteinesParQuantite: 4 },
+    { nom: "1 Œuf", proteinesPar100g: null, proteinesParQuantite: 6 },
+    { nom: "Seitan", proteinesPar100g: 20, proteinesParQuantite: null },
+    { nom: "Tofu", proteinesPar100g: 12, proteinesParQuantite: null },
+    { nom: "Lentilles corail", proteinesPar100g: 27, proteinesParQuantite: null },
+    { nom: "Lentilles vertes", proteinesPar100g: 25, proteinesParQuantite: null },
+    { nom: "Haricots blancs", proteinesPar100g: 7, proteinesParQuantite: null },
+    { nom: "Haricots rouges", proteinesPar100g: 10, proteinesParQuantite: null },
+    { nom: "Brebis, chèvre tomme", proteinesPar100g: 22, proteinesParQuantite: null },
+    { nom: "Brebis, chèvre frais", proteinesPar100g: 13, proteinesParQuantite: null },
+    { nom: "Parmesan", proteinesPar100g: 35, proteinesParQuantite: null },
+    { nom: "Mozzarella", proteinesPar100g: 28, proteinesParQuantite: null },
+    { nom: "Fêta", proteinesPar100g: 14, proteinesParQuantite: null },
+    { nom: "Crevettes", proteinesPar100g: 19, proteinesParQuantite: null },
+    { nom: "Crabes, palourdes", proteinesPar100g: 17, proteinesParQuantite: null },
+    { nom: "Moules", proteinesPar100g: 12, proteinesParQuantite: null },
+    { nom: "1 Huitres moyenne", proteinesPar100g: null, proteinesParQuantite: 2 },
+    { nom: "Saumon cuit", proteinesPar100g: 23, proteinesParQuantite: null },
+    { nom: "Cabillaud", proteinesPar100g: 15, proteinesParQuantite: null },
+    { nom: "Merlan, colin, Sardine fraiche", proteinesPar100g: 20, proteinesParQuantite: null },
+    { nom: "Thon albacore au naturel", proteinesPar100g: 28, proteinesParQuantite: null },
+    { nom: "Sardine à l'huile", proteinesPar100g: 24, proteinesParQuantite: null },
+    { nom: "Foie de morue", proteinesPar100g: 5, proteinesParQuantite: null },
+    { nom: "Avocat", proteinesPar100g: 2, proteinesParQuantite: null },
+    { nom: "1/2 Avocat", proteinesPar100g: null, proteinesParQuantite: 2 },
+    { nom: "Fruits, jus de fruits", proteinesPar100g: 1, proteinesParQuantite: null },
+    { nom: "Petits pois cuits", proteinesPar100g: 5, proteinesParQuantite: null },
+    { nom: "Légumes, patates", proteinesPar100g: 2, proteinesParQuantite: null },
+    { nom: "Riz blanc, semoule, Basmati", proteinesPar100g: 3, proteinesParQuantite: null },
+    { nom: "Pâtes complètes, Quinoa", proteinesPar100g: 5, proteinesParQuantite: null },
+    { nom: "Frites", proteinesPar100g: 3, proteinesParQuantite: null },
+    { nom: "1 Pizza jambon fromage", proteinesPar100g: null, proteinesParQuantite: 36 },
+    { nom: "1 tranche de Jambon blanc", proteinesPar100g: null, proteinesParQuantite: 8 },
+    { nom: "Viande des grisons", proteinesPar100g: 38, proteinesParQuantite: null },
+    { nom: "Steak haché", proteinesPar100g: 23, proteinesParQuantite: null },
+    { nom: "Poulet", proteinesPar100g: 29, proteinesParQuantite: null },
+    { nom: "Purée d'amande", proteinesPar100g: 25, proteinesParQuantite: null },
+    { nom: "1 tartine de Purée d'amande", proteinesPar100g: null, proteinesParQuantite: 8 },
+    { nom: "Cacahuètes", proteinesPar100g: 26, proteinesParQuantite: null },
+    { nom: "Pistaches", proteinesPar100g: 20, proteinesParQuantite: null },
+    { nom: "Amande", proteinesPar100g: 21, proteinesParQuantite: null }
+  ];
+  majListes();
+}
 
   function majListes() {
     const selects = {
@@ -319,9 +361,7 @@ navigator.vibrate(100); // 🔔 petite vibration à chaque ajout
       nom,
       proteinesPar100g: isNaN(p100g) ? null : p100g,
       proteinesParQuantite: isNaN(pQuantite) ? null : pQuantite,
-    });
-    localStorage.setItem("aliments", JSON.stringify(aliments));
-    majListes();
+    });    majListes();
     document.getElementById("nomAliment").value = '';
     document.getElementById("valeur100g").value = '';
     document.getElementById("valeurQuantite").value = '';
@@ -339,10 +379,7 @@ navigator.vibrate(100); // 🔔 petite vibration à chaque ajout
 
     if (nom) aliments[index].nom = nom;
     aliments[index].proteinesPar100g = isNaN(p100g) ? null : p100g;
-    aliments[index].proteinesParQuantite = isNaN(pQuantite) ? null : pQuantite;
-
-    localStorage.setItem("aliments", JSON.stringify(aliments));
-    majListes();
+    aliments[index].proteinesParQuantite = isNaN(pQuantite) ? null : pQuantite;    majListes();
     document.getElementById("modifNom").value = '';
     document.getElementById("modif100g").value = '';
     document.getElementById("modifQuantite").value = '';
@@ -354,27 +391,30 @@ navigator.vibrate(100); // 🔔 petite vibration à chaque ajout
 
     const index = document.getElementById("alimentModif").value;
     if (index === "") return;
-    aliments.splice(index, 1);
-    localStorage.setItem("aliments", JSON.stringify(aliments));
-    majListes();
+    aliments.splice(index, 1);    majListes();
   }
 
-  function validerInfos() {
-    sexe = document.getElementById("sexe").value;
-    poidsUtilisateur = parseFloat(document.getElementById("poids").value);
-    if (isNaN(poidsUtilisateur)) return;
+  
+function validerInfos() {
+  sexe = document.getElementById("sexe").value;
+  poidsUtilisateur = parseFloat(document.getElementById("poids").value);
+  if (isNaN(poidsUtilisateur)) return;
 
-    localStorage.setItem("sexe", sexe);
-    localStorage.setItem("poids", poidsUtilisateur);
+  localStorage.setItem("sexe", sexe);
+  localStorage.setItem("poids", poidsUtilisateur);
 
-    besoinProteines = poidsUtilisateur * (sexe === "homme" ? 1.5 : 1.2);
-    document.getElementById("initialForm").style.display = "none";
-    document.getElementById("mainApp").style.display = "block";
-    chargerAliments();
-    chargerTotal();
-    majTotal();
-    majGraphique();
-  }
+  besoinProteines = poidsUtilisateur * (sexe === "homme" ? 1.5 : 1.2);
+  document.getElementById("initialForm").style.display = "none";
+  document.getElementById("mainApp").style.display = "block";
+
+  chargerAliments();
+  chargerTotal();
+  majTotal();
+  majGraphique();
+  enregistrerJournee();
+  majGraphiqueHistorique();
+}
+
 
   function chargerInfosUtilisateur() {
     const sexeSauvegarde = localStorage.getItem("sexe");
@@ -411,6 +451,8 @@ navigator.vibrate(100); // 🔔 petite vibration à chaque ajout
 
     majTotal();
     majGraphique();
+    majGraphiqueHistorique();
+  majGraphiqueHistorique();
   }
 
   function ajouterParQuantite() {
@@ -431,9 +473,12 @@ navigator.vibrate(100); // 🔔 petite vibration à chaque ajout
 
     majTotal();
     majGraphique();
+    majGraphiqueHistorique();
+  majGraphiqueHistorique();
   }
 
   function resetJournee() {
+  enregistrerJournee();
 
 navigator.vibrate(100); // 🔔 petite vibration à chaque ajout
 
@@ -441,6 +486,8 @@ navigator.vibrate(100); // 🔔 petite vibration à chaque ajout
     localStorage.setItem("totalProteines", JSON.stringify({ date: new Date().toDateString(), totalProteines }));
     majTotal();
     majGraphique();
+    majGraphiqueHistorique();
+  majGraphiqueHistorique();
   }
 
   function majTotal() {
@@ -467,9 +514,63 @@ navigator.vibrate(100); // 🔔 petite vibration à chaque ajout
     });
   }
 
-  window.onload = () => {
-    chargerInfosUtilisateur();
-  };
+  
+function enregistrerJournee() {
+  const date = new Date().toLocaleDateString('fr-FR');
+  let historique = JSON.parse(localStorage.getItem("historiqueProteines")) || {};
+  historique[date] = totalProteines;
+  localStorage.setItem("historiqueProteines", JSON.stringify(historique));
+}
+
+
+function majGraphiqueHistorique() {
+  const ctx = document.getElementById('graphiqueHistorique').getContext('2d');
+  const historique = JSON.parse(localStorage.getItem("historiqueProteines")) || {};
+
+  const jours = [];
+  const valeurs = [];
+
+  const maintenant = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date(maintenant);
+    date.setDate(maintenant.getDate() - i);
+    const cle = date.toLocaleDateString('fr-FR');
+    jours.push(date.toLocaleDateString('fr-FR', { weekday: 'short' }));
+    valeurs.push(historique[cle] || 0);
+  }
+
+  if (window.graphiqueHistoriqueInstance) window.graphiqueHistoriqueInstance.destroy();
+
+  window.graphiqueHistoriqueInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: jours,
+      datasets: [{
+        label: 'Protéines par jour (g)',
+        data: valeurs,
+        backgroundColor: '#B388FF'
+      }]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+}
+
+
+function resetSemaine() {
+  if (confirm("Voulez-vous vraiment effacer l'historique de la semaine ?")) {
+    localStorage.removeItem("historiqueProteines");
+    majGraphiqueHistorique();
+  }
+}
+
+window.onload = () => {
+  chargerInfosUtilisateur();
+  chargerAliments();
+};
 
 function toggleModeSombre() {
   document.body.classList.toggle('sombre');
